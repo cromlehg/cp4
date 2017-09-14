@@ -471,13 +471,19 @@ contract CommonSale is StagedCrowdsale {
     uint tokensWithBonus = tokens.add(bonusTokens);
     token.mint(this, tokensWithBonus);
     token.transfer(msg.sender, tokensWithBonus);
-    uint foundersTokens = tokens.mul(foundersPercent).div(percentRate);
-    token.mint(this, foundersTokens);
-    token.transfer(foundersTokensWallet, foundersTokens);
   }
 
   function finishMinting() public whenNotPaused onlyOwner {
-//
+    uint issuedTokenSupply = token.totalSupply();
+    uint summaryTokensPercent = bountyTokensPercent + foundersTokensPercent;
+    uint summaryFoundersTokens = issuedTokenSupply.mul(summaryTokensPercent).div(percentRate - summaryTokensPercent);
+    uint totalSupply = summaryFoundersTokens + issuedTokenSupply;
+    uint foundersTokens = totalSupply.mul(foundersTokensPercent).div(percentRate);
+    uint bountyTokens = totalSupply.mul(bountyTokensPercent).div(percentRate);
+    token.mint(this, foundersTokens);
+    token.transfer(foundersTokensWallet, foundersTokens);
+    token.mint(this, bountyTokens);
+    token.transfer(bountyTokensWallet, bountyTokens);
     if(nextSale == address(0)) {
       token.finishMinting();
     } else {
