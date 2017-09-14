@@ -420,9 +420,22 @@ contract CommonSale is StagedCrowdsale {
 
   uint public percentRate = 100;
 
+  uint public softcap;
+
+  bool public refundOn = false;
+
+  bool public isSoftcapOn = false;
+
+  mapping (address => uint) balances;
+
   CommonSale public nextSale;
   
   MintableToken public token;
+
+  function setSoftcap(uint newSoftcap) onlyOwner {
+    isSoftcapOn = true;
+    softcap = newSoftcap;
+  }
 
   function setToken(address newToken) onlyOwner {
     token = MintableToken(newToken);
@@ -464,30 +477,43 @@ contract CommonSale is StagedCrowdsale {
     require(msg.value > 0);
     uint milestoneIndex = currentMilestone();
     Milestone storage milestone = milestones[milestoneIndex];
-    multisigWallet.transfer(msg.value);
+    if(!isSoftcapOn) {
+      multisigWallet.transfer(msg.value);
+    }
     invested = invested.add(msg.value);
     uint tokens = msg.value.mul(1 ether).div(price);
     uint bonusTokens = tokens.mul(milestone.bonus).div(percentRate);
     uint tokensWithBonus = tokens.add(bonusTokens);
     token.mint(this, tokensWithBonus);
     token.transfer(msg.sender, tokensWithBonus);
+    balances[msg.sender] = balances[msg.sender].add(msg.value);
   }
 
+  function refund() {
+    require(refundOn && balances[msg.sender] > 0);
+    msg.sender.transfer(balances[msg.sender]);
+  } 
+
   function finishMinting() public whenNotPaused onlyOwner {
-    uint issuedTokenSupply = token.totalSupply();
-    uint summaryTokensPercent = bountyTokensPercent + foundersTokensPercent;
-    uint summaryFoundersTokens = issuedTokenSupply.mul(summaryTokensPercent).div(percentRate - summaryTokensPercent);
-    uint totalSupply = summaryFoundersTokens + issuedTokenSupply;
-    uint foundersTokens = totalSupply.mul(foundersTokensPercent).div(percentRate);
-    uint bountyTokens = totalSupply.mul(bountyTokensPercent).div(percentRate);
-    token.mint(this, foundersTokens);
-    token.transfer(foundersTokensWallet, foundersTokens);
-    token.mint(this, bountyTokens);
-    token.transfer(bountyTokensWallet, bountyTokens);
-    if(nextSale == address(0)) {
+    if(isSoftcapOn && invested < softcap) {
+      refundOn = true;
       token.finishMinting();
     } else {
-      token.setSaleAgent(nextSale);
+      uint issuedTokenSupply = token.totalSupply();
+      uint summaryTokensPercent = bountyTokensPercent + foundersTokensPercent;
+      uint summaryFoundersTokens = issuedTokenSupply.mul(summaryTokensPercent).div(percentRate - summaryTokensPercent);
+      uint totalSupply = summaryFoundersTokens + issuedTokenSupply;
+      uint foundersTokens = totalSupply.mul(foundersTokensPercent).div(percentRate);
+      uint bountyTokens = totalSupply.mul(bountyTokensPercent).div(percentRate);
+      token.mint(this, foundersTokens);
+      token.transfer(foundersTokensWallet, foundersTokens);
+      token.mint(this, bountyTokens);
+      token.transfer(bountyTokensWallet, bountyTokens);
+      if(nextSale == address(0)) {
+        token.finishMinting();
+      } else {
+        token.setSaleAgent(nextSale);
+      }
     }
   }
 
@@ -501,4 +527,20 @@ contract CommonSale is StagedCrowdsale {
   }
 
 }
+
+contract Presale is CommonSale {
+
+  function Presale() {
+    setSoftcap(0);
+  }
+
+}
+
+contract Crowdsale is CommonSale {
+
+  function Crowdsale() {
+  }
+
+}
+
 
