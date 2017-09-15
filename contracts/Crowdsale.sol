@@ -628,12 +628,12 @@ contract TestConfigurator is Ownable {
     presale.setMultisigWallet(presaleMultisigWallet);
     presale.setFoundersTokensWallet(presaleFoundersWallet);
     presale.setBountyTokensWallet(presaleBountyTokensWallet);
-    presale.setStart(1520600400);
+    presale.setStart(1505480400);
     presale.setFoundersTokensPercent(15);
     presale.setBountyTokensPercent(5);
     presale.setPrice(10000000000000000);
-    presale.addMilestone(1,300);
     presale.addMilestone(1,200);
+    presale.addMilestone(1,100);
     token.setSaleAgent(presale);	
 
     mainsale = new CommonSale();
@@ -643,7 +643,7 @@ contract TestConfigurator is Ownable {
     mainsale.setMultisigWallet(mainsaleMultisigWallet);
     mainsale.setFoundersTokensWallet(mainsaleFoundersWallet);
     mainsale.setBountyTokensWallet(mainsaleBountyTokensWallet);
-    mainsale.setStart(1528549200);
+    mainsale.setStart(1505739600);
     mainsale.setFoundersTokensPercent(15);
     mainsale.setBountyTokensPercent(5);
     mainsale.setPrice(10000000000000000);
