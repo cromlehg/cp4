@@ -489,8 +489,8 @@ contract CommonSale is StagedCrowdsale {
     balances[msg.sender] = balances[msg.sender].add(msg.value);
   }
 
-  function refund() {
-    require(refundOn && balances[msg.sender] > 0);
+  function refund() whenNotPaused {
+    require(now > start && refundOn && balances[msg.sender] > 0);
     msg.sender.transfer(balances[msg.sender]);
   } 
 
@@ -499,6 +499,9 @@ contract CommonSale is StagedCrowdsale {
       refundOn = true;
       token.finishMinting();
     } else {
+      if(isSoftcapOn) {
+        multisigWallet.transfer(invested);
+      }
       uint issuedTokenSupply = token.totalSupply();
       uint summaryTokensPercent = bountyTokensPercent + foundersTokensPercent;
       uint summaryFoundersTokens = issuedTokenSupply.mul(summaryTokensPercent).div(percentRate - summaryTokensPercent);
@@ -528,19 +531,122 @@ contract CommonSale is StagedCrowdsale {
 
 }
 
-contract Presale is CommonSale {
 
-  function Presale() {
-    setSoftcap(0);
+// FIXME: needs to fix addresses and hardcap, softcap
+contract Configurator is Ownable {
+
+  function deploy() {
+    address presaleMultisigWallet = 0x0;
+    address presaleBountyTokensWallet = 0x0;
+    address presaleFoundersWallet = 0x0;
+    uint presaleSoftcap = 0x0;
+    uint presaleHardcap = 0x0;
+
+    address mainsaleMultisigWallet = 0x0;
+    address mainsaleBountyTokensWallet = 0x0;
+    address mainsaleFoundersWallet = 0x0;
+    uint mainsaleHardcap = 0x0;
+
+    MintableToken token = new TlindToken();
+
+    CommonSale presale = new CommonSale();
+
+    presale.setToken(token);
+    presale.setSoftcap(presaleSoftcap);
+    presale.setHardcap(presaleHardcap);
+    presale.setMultisigWallet(presaleMultisigWallet);
+    presale.setFoundersTokensWallet(presaleFoundersWallet);
+    presale.setBountyTokensWallet(presaleBountyTokensWallet);
+    presale.setStart(1506344400);
+    presale.setFoundersTokensPercent(15);
+    presale.setBountyTokensPercent(5);
+    presale.setPrice(10000000000000000);
+    presale.addMilestone(8,300);
+    presale.addMilestone(8,200);
+    token.setSaleAgent(presale);	
+
+    CommonSale mainsale = new CommonSale();
+
+    mainsale.setToken(token);
+    mainsale.setHardcap(mainsaleHardcap);
+    mainsale.setMultisigWallet(mainsaleMultisigWallet);
+    mainsale.setFoundersTokensWallet(mainsaleFoundersWallet);
+    mainsale.setBountyTokensWallet(mainsaleBountyTokensWallet);
+    mainsale.setStart(1510318800);
+    mainsale.setFoundersTokensPercent(15);
+    mainsale.setBountyTokensPercent(5);
+    mainsale.setPrice(10000000000000000);
+    mainsale.addMilestone(1,50);
+    mainsale.addMilestone(6,30);
+    mainsale.addMilestone(14,15);
+    mainsale.addMilestone(14,10);
+    mainsale.addMilestone(14,5);
+    mainsale.addMilestone(7,0);
+    
+    presale.setNextSale(mainsale);
+
+    token.transferOwnership(owner);
+    presale.transferOwnership(owner);
+    mainsale.transferOwnership(owner);
   }
 
 }
 
-contract Crowdsale is CommonSale {
+contract TestConfigurator is Ownable {
 
-  function Crowdsale() {
+  function deploy() {
+    address presaleMultisigWallet = 0xbc0659889ba5A374f6f44b38F8149182a2d6104d;
+    address presaleBountyTokensWallet = 0xC21a62Dd64c33Fcc3881747Fe2B03A0F1C208320;
+    address presaleFoundersWallet = 0x57E38316EcA1143a6221fcc455201F05Acd3c881;
+    uint presaleSoftcap = 1000000000000000000;
+    uint presaleHardcap = 3000000000000000000;
+
+    address mainsaleMultisigWallet = 0x3b1F08573D9A7BB83bc8153D0c90b7cDaDA62b98;
+    address mainsaleBountyTokensWallet = 0x7cd2F202d39ceA6197EdBbf66A4310e3496a6E28;
+    address mainsaleFoundersWallet = 0x58d68B183eE257fFc8C9EC85F138f0D204eeF303;
+    uint mainsaleHardcap = 4000000000000000000;
+
+    MintableToken token = new TlindToken();
+
+    CommonSale presale = new CommonSale();
+
+    presale.setToken(token);
+    presale.setSoftcap(presaleSoftcap);
+    presale.setHardcap(presaleHardcap);
+    presale.setMultisigWallet(presaleMultisigWallet);
+    presale.setFoundersTokensWallet(presaleFoundersWallet);
+    presale.setBountyTokensWallet(presaleBountyTokensWallet);
+    presale.setStart(1520600400);
+    presale.setFoundersTokensPercent(15);
+    presale.setBountyTokensPercent(5);
+    presale.setPrice(10000000000000000);
+    presale.addMilestone(1,300);
+    presale.addMilestone(1,200);
+    token.setSaleAgent(presale);	
+
+    CommonSale mainsale = new CommonSale();
+
+    mainsale.setToken(token);
+    mainsale.setHardcap(mainsaleHardcap);
+    mainsale.setMultisigWallet(mainsaleMultisigWallet);
+    mainsale.setFoundersTokensWallet(mainsaleFoundersWallet);
+    mainsale.setBountyTokensWallet(mainsaleBountyTokensWallet);
+    mainsale.setStart(1528549200);
+    mainsale.setFoundersTokensPercent(15);
+    mainsale.setBountyTokensPercent(5);
+    mainsale.setPrice(10000000000000000);
+    mainsale.addMilestone(1,50);
+    mainsale.addMilestone(2,30);
+    mainsale.addMilestone(1,0);
+    
+    presale.setNextSale(mainsale);
+
+    token.transferOwnership(owner);
+    presale.transferOwnership(owner);
+    mainsale.transferOwnership(owner);
   }
 
 }
+
 
 
