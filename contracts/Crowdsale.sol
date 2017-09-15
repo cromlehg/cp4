@@ -535,6 +535,12 @@ contract CommonSale is StagedCrowdsale {
 // FIXME: needs to fix addresses and hardcap, softcap
 contract Configurator is Ownable {
 
+  MintableToken public token; 
+
+  CommonSale public presale;
+
+  CommonSale public mainsale;
+
   function deploy() {
     address presaleMultisigWallet = 0x0;
     address presaleBountyTokensWallet = 0x0;
@@ -547,9 +553,9 @@ contract Configurator is Ownable {
     address mainsaleFoundersWallet = 0x0;
     uint mainsaleHardcap = 0x0;
 
-    MintableToken token = new TlindToken();
+    token = new TlindToken();
 
-    CommonSale presale = new CommonSale();
+    presale = new CommonSale();
 
     presale.setToken(token);
     presale.setSoftcap(presaleSoftcap);
@@ -565,7 +571,7 @@ contract Configurator is Ownable {
     presale.addMilestone(8,200);
     token.setSaleAgent(presale);	
 
-    CommonSale mainsale = new CommonSale();
+    mainsale = new CommonSale();
 
     mainsale.setToken(token);
     mainsale.setHardcap(mainsaleHardcap);
@@ -594,6 +600,12 @@ contract Configurator is Ownable {
 
 contract TestConfigurator is Ownable {
 
+  MintableToken public token; 
+
+  CommonSale public presale;
+
+  CommonSale public mainsale;
+
   function deploy() {
     address presaleMultisigWallet = 0xbc0659889ba5A374f6f44b38F8149182a2d6104d;
     address presaleBountyTokensWallet = 0xC21a62Dd64c33Fcc3881747Fe2B03A0F1C208320;
@@ -606,9 +618,9 @@ contract TestConfigurator is Ownable {
     address mainsaleFoundersWallet = 0x58d68B183eE257fFc8C9EC85F138f0D204eeF303;
     uint mainsaleHardcap = 4000000000000000000;
 
-    MintableToken token = new TlindToken();
+    token = new TlindToken();
 
-    CommonSale presale = new CommonSale();
+    presale = new CommonSale();
 
     presale.setToken(token);
     presale.setSoftcap(presaleSoftcap);
@@ -624,7 +636,7 @@ contract TestConfigurator is Ownable {
     presale.addMilestone(1,200);
     token.setSaleAgent(presale);	
 
-    CommonSale mainsale = new CommonSale();
+    mainsale = new CommonSale();
 
     mainsale.setToken(token);
     mainsale.setHardcap(mainsaleHardcap);
