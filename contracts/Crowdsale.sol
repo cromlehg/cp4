@@ -474,7 +474,7 @@ contract CommonSale is StagedCrowdsale {
   }
 
   function createTokens() whenNotPaused isUnderHardCap saleIsOn payable {
-    require(msg.value > 100000000000000000);
+    require(msg.value >= 100000000000000000);
     uint milestoneIndex = currentMilestone();
     Milestone storage milestone = milestones[milestoneIndex];
     if(!isSoftcapOn) {
