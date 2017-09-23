@@ -565,8 +565,8 @@ contract Configurator is Ownable {
     presale.setFoundersTokensPercent(15);
     presale.setBountyTokensPercent(5);
     presale.setPrice(10000000000000000);
-    presale.addMilestone(8,300);
     presale.addMilestone(8,200);
+    presale.addMilestone(8,100);
     token.setSaleAgent(presale);	
 
     mainsale = new CommonSale();
