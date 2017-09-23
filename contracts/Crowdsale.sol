@@ -531,8 +531,6 @@ contract CommonSale is StagedCrowdsale {
 
 }
 
-
-// FIXME: needs to fix addresses and hardcap, softcap
 contract Configurator is Ownable {
 
   MintableToken public token; 
@@ -542,16 +540,16 @@ contract Configurator is Ownable {
   CommonSale public mainsale;
 
   function deploy() {
-    address presaleMultisigWallet = 0x0;
-    address presaleBountyTokensWallet = 0x0;
-    address presaleFoundersWallet = 0x0;
-    uint presaleSoftcap = 0x0;
-    uint presaleHardcap = 0x0;
+    address presaleMultisigWallet = 0x675cf930aefA144dA7e10ddBACC02f902A233eFC;
+    address presaleBountyTokensWallet = 0x06B8fF8476425E45A3D2878e0a27BB79efd4Dde1;
+    address presaleFoundersWallet = 0x27F1Ac3E29CBec9D225d98fF95B6933bD30E3F71;
+    uint presaleSoftcap = 50000000000000000000;
+    uint presaleHardcap = 2000000000000000000000;
 
-    address mainsaleMultisigWallet = 0x0;
-    address mainsaleBountyTokensWallet = 0x0;
-    address mainsaleFoundersWallet = 0x0;
-    uint mainsaleHardcap = 0x0;
+    address mainsaleMultisigWallet = 0xFb72502E9c56497BAC3B1c21DE434b371891CC05;
+    address mainsaleBountyTokensWallet = 0xd08112054C8e01E33fAEE176531dEB087809CbB2;
+    address mainsaleFoundersWallet = 0xDeFAE9a126bA5aA2537AaC481D9335827159D33B;
+    uint mainsaleHardcap = 25000000000000000000000000;
 
     token = new TlindToken();
 
@@ -588,68 +586,6 @@ contract Configurator is Ownable {
     mainsale.addMilestone(14,10);
     mainsale.addMilestone(14,5);
     mainsale.addMilestone(7,0);
-    
-    presale.setNextSale(mainsale);
-
-    token.transferOwnership(owner);
-    presale.transferOwnership(owner);
-    mainsale.transferOwnership(owner);
-  }
-
-}
-
-contract TestConfigurator is Ownable {
-
-  MintableToken public token; 
-
-  CommonSale public presale;
-
-  CommonSale public mainsale;
-
-  function deploy() {
-    address presaleMultisigWallet = 0xbc0659889ba5A374f6f44b38F8149182a2d6104d;
-    address presaleBountyTokensWallet = 0xC21a62Dd64c33Fcc3881747Fe2B03A0F1C208320;
-    address presaleFoundersWallet = 0x57E38316EcA1143a6221fcc455201F05Acd3c881;
-    uint presaleSoftcap = 1000000000000000000;
-    uint presaleHardcap = 3000000000000000000;
-
-    address mainsaleMultisigWallet = 0x3b1F08573D9A7BB83bc8153D0c90b7cDaDA62b98;
-    address mainsaleBountyTokensWallet = 0x7cd2F202d39ceA6197EdBbf66A4310e3496a6E28;
-    address mainsaleFoundersWallet = 0x58d68B183eE257fFc8C9EC85F138f0D204eeF303;
-    uint mainsaleHardcap = 4000000000000000000;
-
-    token = new TlindToken();
-
-    presale = new CommonSale();
-
-    presale.setToken(token);
-    presale.setSoftcap(presaleSoftcap);
-    presale.setHardcap(presaleHardcap);
-    presale.setMultisigWallet(presaleMultisigWallet);
-    presale.setFoundersTokensWallet(presaleFoundersWallet);
-    presale.setBountyTokensWallet(presaleBountyTokensWallet);
-    presale.setStart(1505480400);
-    presale.setFoundersTokensPercent(15);
-    presale.setBountyTokensPercent(5);
-    presale.setPrice(10000000000000000);
-    presale.addMilestone(1,200);
-    presale.addMilestone(1,100);
-    token.setSaleAgent(presale);	
-
-    mainsale = new CommonSale();
-
-    mainsale.setToken(token);
-    mainsale.setHardcap(mainsaleHardcap);
-    mainsale.setMultisigWallet(mainsaleMultisigWallet);
-    mainsale.setFoundersTokensWallet(mainsaleFoundersWallet);
-    mainsale.setBountyTokensWallet(mainsaleBountyTokensWallet);
-    mainsale.setStart(1505739600);
-    mainsale.setFoundersTokensPercent(15);
-    mainsale.setBountyTokensPercent(5);
-    mainsale.setPrice(10000000000000000);
-    mainsale.addMilestone(1,50);
-    mainsale.addMilestone(2,30);
-    mainsale.addMilestone(1,0);
     
     presale.setNextSale(mainsale);
 
