@@ -491,7 +491,9 @@ contract CommonSale is StagedCrowdsale {
 
   function refund() whenNotPaused {
     require(now > start && refundOn && balances[msg.sender] > 0);
-    msg.sender.transfer(balances[msg.sender]);
+    uint value = balances[msg.sender];
+    balances[msg.sender] = 0;
+    msg.sender.transfer(value);
   } 
 
   function finishMinting() public whenNotPaused onlyOwner {
